@@ -33,11 +33,33 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 })
 
+document.addEventListener('click', event => {
+  document.querySelectorAll('.mailbox-emails').forEach(element => {
+    if (element === event.target){
+      fetch(`emails/${element.dataset.email}`)
+      .then(response => response.json())
+      .then(email => {
+        // const new_element = document.createElement('div');
+        // new_element.innerHTML = `<div>From: ${email.sender} <br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}</div>`
+        document.querySelector('#display-email').innerHTML = `From: ${email.sender} <br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}`;
+        document.querySelector('#display-email').style.display = 'block';
+        document.querySelector('#emails-view').style.display = 'none';
+      }) 
+    }
+  })
+})
+  
+
 function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  if (document.querySelector('#display-email').style.display === 'none'){
+  }
+  else{
+    document.querySelector('#display-email').style.display = 'none';
+  }
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -50,6 +72,11 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  if (document.querySelector('#display-email').style.display === 'none'){
+  }
+  else{
+    document.querySelector('#display-email').style.display = 'none';
+  }
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
@@ -61,7 +88,14 @@ function load_mailbox(mailbox) {
       if(results.hasOwnProperty(result)){
         console.log(results[result].subject);
         const element = document.createElement('div');
-        element.innerHTML = `<div>From: ${results[result].sender} <br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+        element.innerHTML = `<div data-email = "${results[result].id}" class = "mailbox-emails">From: ${results[result].sender} <br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+        if (results[result].read === true){
+          element.style.backgroundColor = 'gray';
+        }
+        else{
+          element.style.backgroundColor = 'white';
+        }
+        
         element.style.borderStyle = 'solid';
         document.querySelector('#emails-view').append(element);
       }
