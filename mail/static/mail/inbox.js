@@ -62,7 +62,8 @@ function load_mailbox(mailbox) {
         console.log(results[result].subject);
         const element = document.createElement('div');
         element.innerHTML = `<div>From: ${results[result].sender} <br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
-        document.querySelector('#emails-view').appendChild(element);
+        element.style.borderStyle = 'solid';
+        document.querySelector('#emails-view').append(element);
       }
       
     }
