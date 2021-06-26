@@ -170,7 +170,12 @@ function reply(id){
   .then(email => {
     // Pre-fill composition fields
     document.querySelector('#compose-recipients').value = `${email.sender}`;
-    document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+    if (email.subject.includes('Re:')){
+      document.querySelector('#compose-subject').value = `${email.subject}`;
+    }
+    else{
+      document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+    }
     document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
   })
 }
