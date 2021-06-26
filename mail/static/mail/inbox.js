@@ -39,11 +39,15 @@ document.addEventListener('click', event => {
       fetch(`emails/${element.dataset.email}`)
       .then(response => response.json())
       .then(email => {
-        // const new_element = document.createElement('div');
-        // new_element.innerHTML = `<div>From: ${email.sender} <br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}</div>`
         document.querySelector('#display-email').innerHTML = `From: ${email.sender} <br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}`;
         document.querySelector('#display-email').style.display = 'block';
         document.querySelector('#emails-view').style.display = 'none';
+        fetch(`emails/${element.dataset.email}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              read: true
+          })
+        })
       }) 
     }
   })
@@ -88,7 +92,16 @@ function load_mailbox(mailbox) {
       if(results.hasOwnProperty(result)){
         console.log(results[result].subject);
         const element = document.createElement('div');
-        element.innerHTML = `<div data-email = "${results[result].id}" class = "mailbox-emails">From: ${results[result].sender} <br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+        if (mailbox === 'inbox'){
+          element.innerHTML = `<div data-email = "${results[result].id}" class = "mailbox-emails">From: ${results[result].sender} <button onclick = "archive(${results[result].id})">Archive</button><br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+        }
+        else if(mailbox === 'archive'){
+          element.innerHTML = `<div data-email = "${results[result].id}" class = "mailbox-emails">From: ${results[result].sender} <button onclick = "unarchive(${results[result].id})">Unarchive</button><br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+          console.log('in archive');
+        }
+        else{
+          element.innerHTML = `<div data-email = "${results[result].id}" class = "mailbox-emails">From: ${results[result].sender} <br>Subject: ${results[result].subject} <br>Timestamp: ${results[result].timestamp}</div>`
+        }
         if (results[result].read === true){
           element.style.backgroundColor = 'gray';
         }
@@ -103,4 +116,24 @@ function load_mailbox(mailbox) {
     }
 
   })
+}
+
+function archive(id){
+  fetch(`emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: true
+    })
+  })
+  location.reload();
+}
+
+function unarchive(id){
+  fetch(`emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: false
+    })
+  })
+  location.reload();
 }
