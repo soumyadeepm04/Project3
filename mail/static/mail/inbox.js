@@ -39,7 +39,7 @@ document.addEventListener('click', event => {
       fetch(`emails/${element.dataset.email}`)
       .then(response => response.json())
       .then(email => {
-        document.querySelector('#display-email').innerHTML = `From: ${email.sender} <br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}`;
+        document.querySelector('#display-email').innerHTML = `From: ${email.sender} <button onclick = "reply(${email.id})">Reply</button><br>To: ${email.recipients} <br>Subject: ${email.subject} <br>Timestamp: ${email.timestamp} <br>Body: ${email.body}`;
         document.querySelector('#display-email').style.display = 'block';
         document.querySelector('#emails-view').style.display = 'none';
         fetch(`emails/${element.dataset.email}`, {
@@ -136,4 +136,41 @@ function unarchive(id){
     })
   })
   location.reload();
+}
+
+// function reply(sender, subject, body, timestamp){
+//   // Show compose view and hide other views
+//   document.querySelector('#emails-view').style.display = 'none';
+//   document.querySelector('#compose-view').style.display = 'block';
+//   if (document.querySelector('#display-email').style.display === 'none'){
+//   }
+//   else{
+//     document.querySelector('#display-email').style.display = 'none';
+//   }
+
+//   // Pre-fill composition fields
+//   document.querySelector('#compose-recipients').value = `${sender}`;
+//   document.querySelector('#compose-subject').value = `Re: ${subject}`;
+//   document.querySelector('#compose-body').value = `On ${timestamp} ${sender} wrote: ${body}`;
+// }
+
+// , email.subject, email.body, email.timestamp
+
+function reply(id){
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+  if (document.querySelector('#display-email').style.display === 'none'){
+  }
+  else{
+    document.querySelector('#display-email').style.display = 'none';
+  }
+  fetch(`emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    // Pre-fill composition fields
+    document.querySelector('#compose-recipients').value = `${email.sender}`;
+    document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
+    document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: ${email.body}`;
+  })
 }
